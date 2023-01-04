@@ -29,6 +29,6 @@ exit_code_t add_edge(graph_t *graph, void *src, void *dest)
 {
     exit_code_t exit_code = E_DEFAULT_ERROR;
 
-    exit_code = push_head(graph->adj_lists, dest)
-
+    exit_code = push_head(graph->adj_lists, dest);
+    
 }
