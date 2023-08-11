@@ -46,6 +46,7 @@ endfunction()
 
 # Add data structure libraries and tests
 add_datastructure_library(linked_list)
+add_datastructure_library(array_list)
 add_datastructure_library(hash_table)
 add_datastructure_library(stack)
 add_datastructure_library(queue)
