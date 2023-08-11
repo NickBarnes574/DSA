@@ -104,7 +104,7 @@ int list_push_tail(list_t * list, void * data);
  * @param position the position in which to insert the node
  * @return 0 on success, non-zero value on failure
  */
-int list_push_position(list_t * list, void * data, int position);
+int list_push_position(list_t * list, void * data, uint32_t position);
 
 /**
  * @brief checks if the list object is empty
@@ -137,7 +137,7 @@ list_node_t * list_pop_tail(list_t * list);
  * @param position position of the node
  * @return pointer to popped node on success, NULL on failure
  */
-list_node_t * list_pop_position(list_t * list, int position);
+list_node_t * list_pop_position(list_t * list, uint32_t position);
 
 /**
  * @brief removes a node from the head of a list
@@ -162,7 +162,7 @@ int list_remove_tail(list_t * list);
  * @param position position of the node
  * @return non-zero if list is empty, 0 value if not empty
  */
-int list_remove_position(list_t * list, int position);
+int list_remove_position(list_t * list, uint32_t position);
 
 /**
  * @brief get the data from the node at the head of the list without
@@ -190,7 +190,7 @@ list_node_t * list_peek_tail(list_t * list);
  * @param position position of the node
  * @return pointer to tail node on success, NULL on failure
  */
-list_node_t * list_peek_position(list_t * list, int position);
+list_node_t * list_peek_position(list_t * list, uint32_t position);
 
 /**
  * @brief remove a specific node from the list based on the data stored
