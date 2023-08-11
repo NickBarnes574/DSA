@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/nick/Programming/DSA/build/0_Common",
+  "command": "/usr/bin/clang-10 -DNDEBUG -I/home/nick/Programming/DSA/0_Common/include  -g   -std=c17 -Wall -Wextra -pedantic -o CMakeFiles/Common.dir/src/utilities.c.o   -c /home/nick/Programming/DSA/0_Common/src/utilities.c",
+  "file": "/home/nick/Programming/DSA/0_Common/src/utilities.c"
+},
+{
+  "directory": "/home/nick/Programming/DSA/build/0_Common",
+  "command": "/usr/bin/clang-10 -DNDEBUG -I/home/nick/Programming/DSA/0_Common/include  -g   -std=c17 -Wall -Wextra -pedantic -o CMakeFiles/Common.dir/src/comparisons.c.o   -c /home/nick/Programming/DSA/0_Common/src/comparisons.c",
+  "file": "/home/nick/Programming/DSA/0_Common/src/comparisons.c"
+},
+{
+  "directory": "/home/nick/Programming/DSA/build/1_Data_Structures",
+  "command": "/usr/bin/clang-10 -DNDEBUG -Dlinked_list_EXPORTS -I/home/nick/Programming/DSA/0_Common/include -I/home/nick/Programming/DSA/1_Data_Structures/include  -g -fPIC   -std=c17 -Wall -Wextra -pedantic -g -std=gnu11 -o CMakeFiles/linked_list.dir/src/linked_list.c.o   -c /home/nick/Programming/DSA/1_Data_Structures/src/linked_list.c",
+  "file": "/home/nick/Programming/DSA/1_Data_Structures/src/linked_list.c"
+}
+]
