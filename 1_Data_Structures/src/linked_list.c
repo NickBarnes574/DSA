@@ -11,6 +11,26 @@
 static list_node_t * list_node_new(void * data);
 
 /**
+ * @brief Finds a node in the linked list that matches the given data.
+ *
+ * @param list Pointer to the linked list.
+ * @param data Pointer to the data to be matched.
+ * @return Pointer to the node containing the data if found, NULL otherwise.
+ */
+static list_node_t * find_node(list_t * list, void * data);
+
+/**
+ * @brief Removes a given node from the linked list.
+ *
+ * This function updates the linked list to exclude the given node, freeing
+ * the memory associated with the node and decrementing the list size.
+ *
+ * @param list Pointer to the linked list.
+ * @param node Pointer to the node to be removed.
+ */
+static void remove_node(list_t * list, list_node_t * node);
+
+/**
  * @brief Splits a list into two equal halves
  *
  * @param head Pointer to the head of the list to be split.
@@ -147,7 +167,7 @@ END:
     return exit_code;
 }
 
-int list_push_position(list_t * list, void * data, int position)
+int list_push_position(list_t * list, void * data, uint32_t position)
 {
     int           exit_code    = E_FAILURE;
     list_node_t * new_node     = NULL;
@@ -165,13 +185,6 @@ int list_push_position(list_t * list, void * data, int position)
         goto END;
     }
 
-    new_node = list_node_new(data);
-    if (NULL == new_node)
-    {
-        print_error("Unable to create new node.");
-        goto END;
-    }
-
     // Handle special cases for head and tail
     if (0 == position)
     {
@@ -184,9 +197,16 @@ int list_push_position(list_t * list, void * data, int position)
         goto END;
     }
 
+    new_node = list_node_new(data);
+    if (NULL == new_node)
+    {
+        print_error("Unable to create new node.");
+        goto END;
+    }
+
     // Navigate to the specified position
     current_node = list->head;
-    for (int idx = 0; idx < position - 1; idx++)
+    for (uint32_t idx = 0; idx < position - 1; idx++)
     {
         current_node = current_node->next;
     }
@@ -198,8 +218,8 @@ int list_push_position(list_t * list, void * data, int position)
     current_node->next       = new_node;
 
     list->size += 1;
-    exit_code = E_SUCCESS;
 
+    exit_code = E_SUCCESS;
 END:
     return exit_code;
 }
@@ -281,7 +301,7 @@ END:
     return tail_node;
 }
 
-list_node_t * list_pop_position(list_t * list, int position)
+list_node_t * list_pop_position(list_t * list, uint32_t position)
 {
     list_node_t * current     = NULL;
     list_node_t * node_to_pop = NULL;
@@ -311,7 +331,7 @@ list_node_t * list_pop_position(list_t * list, int position)
     }
 
     current = list->head;
-    for (int idx = 0; idx < position; idx++)
+    for (uint32_t idx = 0; idx < position; idx++)
     {
         current = current->next;
     }
@@ -376,7 +396,7 @@ END:
     return exit_code;
 }
 
-int list_remove_position(list_t * list, int position)
+int list_remove_position(list_t * list, uint32_t position)
 {
     int           exit_code      = E_FAILURE;
     list_node_t * node_to_remove = NULL;
@@ -436,7 +456,7 @@ END:
     return node;
 }
 
-list_node_t * list_peek_position(list_t * list, int position)
+list_node_t * list_peek_position(list_t * list, uint32_t position)
 {
     list_node_t * current_node = NULL;
 
@@ -453,7 +473,7 @@ list_node_t * list_peek_position(list_t * list, int position)
     }
 
     current_node = list->head;
-    for (int idx = 0; idx < position; idx++)
+    for (uint32_t idx = 0; idx < position; idx++)
     {
         current_node = current_node->next;
     }
@@ -464,43 +484,22 @@ END:
 
 int list_remove_data(list_t * list, void ** item_to_remove)
 {
-    int           exit_code    = E_FAILURE;
-    list_node_t * current_node = NULL;
-    list_node_t * temp         = NULL;
+    int           exit_code      = E_FAILURE;
+    list_node_t * node_to_remove = NULL;
 
-    if (NULL == list)
+    if (NULL == list || NULL == item_to_remove || NULL == *item_to_remove)
     {
         print_error("NULL argument passed.");
         goto END;
     }
 
-    current_node = list->head;
-
-    for (size_t idx = 0; idx < list->size; idx++)
+    node_to_remove = find_node(list, *item_to_remove);
+    if (NULL != node_to_remove)
     {
-        if (ERROR != (list->compare_func(item_to_remove, current_node)))
-        {
-            current_node->prev->next = current_node->next;
-            current_node->next->prev = current_node->prev;
-
-            temp = current_node->next; // Save off the next node
-
-            list->custom_free(current_node->data);
-            current_node->data = NULL;
-            free(current_node);
-            current_node = NULL;
-
-            list->size--;
-
-            current_node = temp;
-
-            exit_code = E_SUCCESS;
-            break;
-        }
-
-        current_node = current_node->next;
+        remove_node(list, node_to_remove);
     }
 
+    exit_code = E_SUCCESS;
 END:
     return exit_code;
 }
@@ -712,6 +711,68 @@ static list_node_t * list_node_new(void * data)
 
 END:
     return new_node;
+}
+
+static list_node_t * find_node(list_t * list, void * data)
+{
+    list_node_t * current_node = NULL;
+
+    if ((NULL == list) || (NULL == data))
+    {
+        print_error("Null argument passed.");
+        goto END;
+    }
+
+    current_node = list->head;
+    while (NULL != current_node)
+    {
+        if (EQUAL == list->compare_func(data, current_node->data))
+        {
+            // Success
+            goto END;
+        }
+        current_node = current_node->next;
+    }
+
+END:
+    return current_node;
+}
+
+static void remove_node(list_t * list, list_node_t * node)
+{
+    if ((NULL == list) || (NULL == node))
+    {
+        print_error("NULL argument passed.");
+        goto END;
+    }
+
+    if (NULL != node->prev)
+    {
+        node->prev->next = node->next;
+    }
+    else
+    {
+        list->head = node->next;
+    }
+
+    if (node->next != NULL)
+    {
+        node->next->prev = node->prev;
+    }
+    else
+    {
+        list->tail = node->prev;
+    }
+
+    list->custom_free(node->data);
+    node->data = NULL;
+    free(node);
+    node = NULL;
+
+    list->size--;
+
+END:
+    return;
 }
 
 static void split(list_node_t *  head,
