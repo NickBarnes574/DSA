@@ -756,13 +756,15 @@ static list_node_t * merge(list_node_t * first,
         goto END;
     }
 
-    if (0 > compare_func(first->data, second->data))
+    // 'first' is less than 'second'
+    if (LESS_THAN == compare_func(first->data, second->data))
     {
         result             = first;
         result->next       = merge(first->next, second, compare_func);
         result->next->prev = result;
         result->prev       = NULL;
     }
+    // 'first' is greater than or equal to 'second'
     else
     {
         result             = second;
