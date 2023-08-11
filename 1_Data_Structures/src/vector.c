@@ -7,6 +7,8 @@
 #define LEFT  0 // Used for shifting elements left
 #define RIGHT 1 // Used for shifting elements right
 
+typedef int (*VECTOR_CMP)(const void *, const void *);
+
 /**
  * @brief Resizes the vector, doubling its capacity.
  *
@@ -402,7 +404,7 @@ int vector_sort(vector_t * vector)
     qsort(vector->elements,
           vector->size,
           sizeof(void *),
-          (int (*)(const void *, const void *))vector->compare_func);
+          (VECTOR_CMP)vector->compare_func);
 
     exit_code = E_SUCCESS;
 END:
