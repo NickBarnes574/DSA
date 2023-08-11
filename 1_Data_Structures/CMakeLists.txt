@@ -32,12 +32,15 @@ function(add_datastructure_library name)
     # Set compile options for the library
     target_compile_options(${name} PRIVATE ${CMAKE_C_FLAGS_DEBUG})
 
-    # Add an executable for testing the data structure
-    add_executable(test_${name} ${datastructures1_SOURCE_DIR}/tests/${name}_tests.c)
-    # Link the test executable with the data structure library and other dependencies
-    target_link_libraries(test_${name} ${name} cunit Common)
-    # Set include directories for the test executable
-    target_include_directories(test_${name} PRIVATE ${datastructures1_SOURCE_DIR}/include)
+    # Check if the test file for the given data structure exists
+    if(EXISTS ${datastructures1_SOURCE_DIR}/tests/${name}_tests.c)
+      # Add an executable for testing the data structure
+      add_executable(test_${name} ${datastructures1_SOURCE_DIR}/tests/${name}_tests.c)
+      # Link the test executable with the data structure library and other dependencies
+      target_link_libraries(test_${name} ${name} cunit Common)
+      # Set include directories for the test executable
+      target_include_directories(test_${name} PRIVATE ${datastructures1_SOURCE_DIR}/include)
+    endif()
   endif()
 endfunction()
 
