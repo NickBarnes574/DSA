@@ -41,8 +41,9 @@ typedef void (*PRINT_F)(void *);
  */
 typedef struct vertex
 {
-    char   label[MAX_LABEL_SIZE]; // Label for this vertex
-    void * data;                  // Pointer to the data for this vertex
+    char     label[MAX_LABEL_SIZE]; // Label for this vertex
+    void *   data;                  // Pointer to the data for this vertex
+    list_t * edges;                 // Linked list of edges (adjacent vertices)
 } vertex_t;
 
 /**
@@ -61,13 +62,12 @@ typedef struct edge
  */
 typedef struct graph
 {
-    int  num_vertices;      // Number of vertices in the graph
-    bool is_directed;       // Flag to indicate if the graph is directed
-    list_t **
-            adjacency_list; // Array of pointers to adjacency lists (of edge_t)
-    CMP_F   compare_func;   // Comparison function for vertices
-    FREE_F  free_func;      // Free function for vertices
-    PRINT_F print_func;     // Print function for vertices
+    int      num_vertices; // Number of vertices in the graph
+    bool     is_directed;  // Flag to indicate if the graph is directed
+    list_t * vertices;     // Linked list of vertices
+    CMP_F    compare_func; // Comparison function for vertices
+    FREE_F   free_func;    // Free function for vertices
+    PRINT_F  print_func;   // Print function for vertices
 } graph_t;
 
 /***********************************************************************

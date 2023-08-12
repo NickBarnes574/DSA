@@ -29,6 +29,20 @@ void print_error(const char * p_message);
  */
 void print_errno(const char * p_message, char * p_errno);
 
+/**
+ * @brief Copies the given source string into a newly allocated string.
+ *
+ * This function allocates a new string on the heap and copies the content
+ * of the source string into it. The caller is responsible for freeing
+ * the allocated memory using free().
+ *
+ * @param source Pointer to the source string to be copied. Must be
+ * null-terminated.
+ * @return Pointer to the newly allocated string containing the copy, or NULL if
+ * memory allocation fails.
+ */
+char * copy_string(const char * p_source);
+
 #endif /* _UTILITIES_H */
 
 /*** end of file ***/
