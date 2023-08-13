@@ -5,6 +5,37 @@
 #include "adjacency_list.h"
 #include "utilities.h"
 
+static void free_edge(void * edge_ptr)
+{
+    edge_t * edge = (edge_t *)edge_ptr;
+
+    // No need to free the destination vertex here since it's just a pointer
+    // to a vertex that is managed elsewhere in the graph.
+
+    free(edge);
+}
+
+static void free_vertex(void * vertex_ptr)
+{
+    vertex_t * vertex = (vertex_t *)vertex_ptr;
+
+    // Free the data associated with the vertex if needed
+    if (NULL != vertex->data)
+    {
+        vertex->free_func(vertex->data);
+    }
+
+    // Free the edges list
+    if (NULL != vertex->edges)
+    {
+        list_clear(vertex->edges);
+        free(vertex->edges);
+    }
+
+    // Free the vertex structure itself
+    free(vertex);
+}
+
 /**
  * @brief Find a vertex in the graph by its label.
  * @param graph Pointer to the graph where the search is performed.
@@ -19,7 +50,9 @@ static vertex_t * find_vertex_by_label(graph_t * graph, const char * label);
  * @param data Pointer to the data for the new vertex.
  * @return Pointer to the newly created vertex.
  */
-static vertex_t * create_vertex(const char * label, void * data);
+static vertex_t * create_vertex(const char * label,
+                                void *       data,
+                                FREE_F       custom_free);
 
 /**
  * @brief Create a new edge with the given destination vertex and weight.
@@ -75,7 +108,7 @@ int graph_add_vertex(graph_t * graph, const char * label, void * data)
         goto END;
     }
 
-    vertex = create_vertex(label, data);
+    vertex = create_vertex(label, data, graph->free_func);
     if (NULL == vertex)
     {
         print_error("Unable to create vertex.");
@@ -106,6 +139,12 @@ int graph_add_vertex(graph_t * graph, const char * label, void * data)
 
     exit_code = E_SUCCESS;
 END:
+    // Cleanup if necessary
+    if ((E_SUCCESS != exit_code) && (NULL != vertex))
+    {
+        free_vertex(vertex);
+    }
+
     return exit_code;
 }
 
@@ -224,7 +263,9 @@ static vertex_t * find_vertex_by_label(graph_t * graph, const char * label)
     return NULL;
 }
 
-static vertex_t * create_vertex(const char * label, void * data)
+static vertex_t * create_vertex(const char * label,
+                                void *       data,
+                                FREE_F       custom_free)
 {
     vertex_t * vertex = NULL;
 
@@ -248,8 +289,9 @@ static vertex_t * create_vertex(const char * label, void * data)
     }
 
     strncpy(vertex->label, label, MAX_LABEL_SIZE - 1); // Copy the label
-    vertex->data  = data;
-    vertex->edges = NULL;
+    vertex->data      = data;
+    vertex->edges     = NULL;
+    vertex->free_func = custom_free;
 
 END:
     return vertex;
